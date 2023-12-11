@@ -68,7 +68,7 @@ namespace Blackjack
         {
             Console.Clear();
             //Dealer
-            Console.Write("Dealer ");
+            Console.Write("Dealer" + $"({Program.Dealer.Points})");
             Console.Write(((Program.Dealer.Bust) ? " < Bust" : ""));
             Console.Write("\n");
             foreach (Card c in Program.Dealer.hand)
@@ -81,7 +81,7 @@ namespace Blackjack
             Console.WriteLine("------------------");
             foreach(Player p in Program.Players)
             {
-                Console.Write(p.Name + " | ");
+                Console.Write(p.Name + $"({p.Points})" + " | ");
                 Console.Write(p.BetAmount + " | ");
                 Console.Write(p.Balance + " | ");
                 Console.Write(((p.Bust) ? " < Bust" : ""));

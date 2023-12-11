@@ -17,6 +17,7 @@ namespace Blackjack
         public static int MAXIMUM_POINTS = 21;
         public static int DEALERS_REQUIRED_POINTS = 16;
         public static int MINIMUM_BET = 10;
+        public static int WIN_AMOUNT_MULTIPLIER= 2;
 
         static string SafeInput(List<string> validUserInputs)
         {
@@ -124,28 +125,6 @@ namespace Blackjack
             }
         }
 
-        static bool CorrectAce(Player p)
-        {
-            // don't look at it pls ＞﹏＜
-            foreach (Card c in p.hand)
-            {
-                if (c.Face[1] == 'A')
-                {
-                    c.Value = 1;
-                    if (p.CalculatePoints() > MAXIMUM_POINTS) 
-                    { 
-                        return true;
-                    }
-                    else 
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
         static void PlayersPhase()
         {
             List<string> validInputs = new List<string>() { "h", "s" };
@@ -153,7 +132,6 @@ namespace Blackjack
             //interate through players
             foreach(Player p in Players)
             {
-                CorrectAce(p); // In case the player got 2 Aces
                 if (p.Won || p.Bust) continue;
 
                 Console.WriteLine($"{p.Name}({p.Points}) --> hit(h) or stay(s)");
@@ -164,7 +142,7 @@ namespace Blackjack
                     Screen.Update(1000);
 
                     //bust
-                    if (p.Points > MAXIMUM_POINTS && CorrectAce(p))
+                    if (p.Points > MAXIMUM_POINTS)
                     {                        
                         p.Bust = true;
 
@@ -192,7 +170,10 @@ namespace Blackjack
         static void DealerPhase()
         {
             Dealer.hand[1].IsFaceDown = false;
-            Screen.Update(1000);
+           
+            Dealer.CalculatePoints();
+            
+            Screen.Update(2000);
 
             while(Dealer.Points <= DEALERS_REQUIRED_POINTS)
             {
@@ -203,13 +184,16 @@ namespace Blackjack
             //dealer busts
             if(Dealer.Points > MAXIMUM_POINTS)
             {
+                Dealer.Bust = true;
                 GameOverPhase(true);
             }
             GameOverPhase(false);
         }
 
         static void GameOverPhase(bool dealerBust)
-        {       
+        {
+            Screen.Update(); //no raeson at all
+            bool dealerWins = true;
             foreach (Player p in Players)
             {
                 //jump over players who are out
@@ -218,18 +202,22 @@ namespace Blackjack
                     continue;
                 }
 
+                dealerWins = false;
+
                 //every player that is still in the round wins 2x their bet
                 if (dealerBust || p.Points > Dealer.Points)
                 {
-                    p.Balance += p.BetAmount * 2;
-                    Console.WriteLine($"{p.Name} wins {p.BetAmount * 2}");
+                    p.Balance += p.BetAmount * WIN_AMOUNT_MULTIPLIER;
+                    Console.WriteLine($"{p.Name} wins {p.BetAmount * WIN_AMOUNT_MULTIPLIER}");
                     continue;
                 }
 
             }
 
-            return;
-            
+            if (dealerWins)
+            {
+                Console.WriteLine("Dealer wins");
+            }
         }
 
         static void CleanUp()

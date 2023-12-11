@@ -29,10 +29,27 @@ namespace Blackjack
 
         public int CalculatePoints()
         {
+            //magic numbers for life 
             int sum = 0;
+            Card AceInHand = null;
+
             foreach (Card card in hand)
             {
-                sum += card.Value;
+                if(card.Value == 11)
+                {
+                    //ace that still has a value of 11
+                    AceInHand = card;
+                }
+                if (!card.IsFaceDown) 
+                { 
+                    sum += card.Value;
+                }
+            }
+            //automatically saves the player if they're about to bust
+            if(sum > Program.MAXIMUM_POINTS && AceInHand != null)
+            {
+                sum -= 10; //-11 + 1
+                AceInHand.Value = 1;
             }
             return sum;
         }

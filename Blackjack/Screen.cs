@@ -30,6 +30,7 @@ namespace Blackjack
             Console.CursorLeft = x;
             Console.CursorTop = y;
             Console.Write(c);
+            Console.SetCursorPosition(0, 0);
         }
 
         public static void DrawText(int x, int y, string text, ConsoleColor bgColor = ConsoleColor.White, ConsoleColor fgColor = ConsoleColor.Black)
@@ -60,6 +61,11 @@ namespace Blackjack
                 DrawPoint(x + xOffset, y + yOffset, text[i],bgColor,fgColor);
                 xOffset++;
             }
+        }
+
+        public static void Update()
+        {
+
         }
     }
 }

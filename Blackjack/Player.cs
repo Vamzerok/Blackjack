@@ -10,11 +10,17 @@ namespace Blackjack
     {
         public int points;
         public string name;
-        public Player(string name, int StartingPoints)
+
+        private List<Card> hand;
+
+        public Player(string name)
         {
-            this.points = StartingPoints;
             this.name = name;
         }
 
+        public void Draw(Card card)
+        {
+            hand.Add(card);
+        }
     }
 }

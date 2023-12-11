@@ -16,7 +16,7 @@ namespace Blackjack
 
         public static int MAXIMUM_POINTS = 21;
         public static int DEALERS_REQUIRED_POINTS = 16;
-        public static int MINIMUM_BET = 30;
+        public static int MINIMUM_BET = 15;
 
         static string SafeInput(List<string> validUserInputs)
         {

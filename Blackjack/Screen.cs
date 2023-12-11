@@ -68,8 +68,10 @@ namespace Blackjack
         {
             Console.Clear();
             //Dealer
-            Console.WriteLine("Dealer: ");
-            foreach(Card c in Program.Dealer.hand)
+            Console.Write("Dealer ");
+            Console.Write(((Program.Dealer.Bust) ? " < Bust" : ""));
+            Console.Write("\n");
+            foreach (Card c in Program.Dealer.hand)
             {
                 Console.Write(c.Show() + " ");
             }
@@ -79,7 +81,11 @@ namespace Blackjack
             Console.WriteLine("------------------");
             foreach(Player p in Program.Players)
             {
-                Console.Write(p.Name + ((p.Bust) ? " <--- Bust" : "") + "\n");
+                Console.Write(p.Name + " | ");
+                Console.Write(p.BetAmount + " | ");
+                Console.Write(p.Balance + " | ");
+                Console.Write(((p.Bust) ? " < Bust" : ""));
+                Console.Write("\n");
                 foreach (Card c in p.hand)
                 {
                     Console.Write(c.Show() + " ");

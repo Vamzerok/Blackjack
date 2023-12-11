@@ -11,8 +11,8 @@ namespace Blackjack
         public string Name;
         public int Points = 0;
 
-        public int Balance = 0;
-        public int BetAmount = 0;
+        public double Balance = 0;
+        public double BetAmount = 0;
 
         public bool Bust = false;
         public bool Won = false;
@@ -27,6 +27,16 @@ namespace Blackjack
             this.Balance = balance;
         }
 
+        public int CalculatePoints()
+        {
+            int sum = 0;
+            foreach (Card card in hand)
+            {
+                sum += card.Value;
+            }
+            return sum;
+        }
+
         public void DrawRandomCard(bool isFaceDown = false)
         {
             int chosenCardIndex = rnd.Next(Program.Deck.Count());
@@ -35,7 +45,7 @@ namespace Blackjack
             chosecard.IsFaceDown = isFaceDown;
 
             this.hand.Add(chosecard);
-            this.Points += chosecard.Value;
+            this.Points = CalculatePoints();
 
             Program.Deck.RemoveAt(chosenCardIndex);
         }

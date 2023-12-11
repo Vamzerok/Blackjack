@@ -8,19 +8,36 @@ namespace Blackjack
 {
     public class Player
     {
-        public int points;
-        public string name;
+        public string Name;
+        public int Points = 0;
 
-        private List<Card> hand;
+        public int Balance = 0;
+        public int BetAmount = 0;
 
-        public Player(string name)
+        public bool Bust = false;
+        public bool Won = false;
+
+        internal static Random rnd = new Random();
+
+        public List<Card> hand = new List<Card>();
+
+        public Player(string name, int balance = 100)
         {
-            this.name = name;
+            this.Name = name;
+            this.Balance = balance;
         }
 
-        public void Draw(Card card)
+        public void DrawRandomCard(bool isFaceDown = false)
         {
-            hand.Add(card);
+            int chosenCardIndex = rnd.Next(Program.Deck.Count());
+            Card chosecard = Program.Deck[chosenCardIndex];
+
+            chosecard.IsFaceDown = isFaceDown;
+
+            this.hand.Add(chosecard);
+            this.Points += chosecard.Value;
+
+            Program.Deck.RemoveAt(chosenCardIndex);
         }
     }
 }

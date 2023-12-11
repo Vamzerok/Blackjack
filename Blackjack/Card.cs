@@ -8,12 +8,24 @@ namespace Blackjack
 {
     public class Card
     {
-        public int value;
-        public string face;
-        public Card(int value, string face) 
+        public int Value;
+        public string Face;
+        public bool IsFaceDown;
+
+        public Card(int value, string face, bool isFaceDown = false) 
         {
-            this.value = value;
-            this.face = face;
+            this.Value = value;
+            this.Face = face;
+            this.IsFaceDown = isFaceDown;
+        }
+
+        public string Show()
+        {
+            if(IsFaceDown)
+            {
+                return "##";
+            }
+            return this.Face;
         }
 
         public static List<Card> GenerateDeck()
@@ -43,9 +55,9 @@ namespace Blackjack
                     string face = suit.ToString() + f.ToString();
                     deck.Add(new Card(10, face));
                 }
-                //ase
+                //ace
                 deck.Add(
-                    new Card(10, suit.ToString() + "A")
+                    new Card(11, suit.ToString() + "A")
                 );
             }
             return deck;

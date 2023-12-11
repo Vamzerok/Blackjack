@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Blackjack
@@ -63,9 +64,30 @@ namespace Blackjack
             }
         }
 
-        public static void Update()
+        public static void Update(int waitTimeInMillisec = 0)
         {
-
+            Console.Clear();
+            //Dealer
+            Console.WriteLine("Dealer: ");
+            foreach(Card c in Program.Dealer.hand)
+            {
+                Console.Write(c.Show() + " ");
+            }
+            Console.Write("\n");
+            
+            //Players
+            Console.WriteLine("------------------");
+            foreach(Player p in Program.Players)
+            {
+                Console.Write(p.Name + ((p.Bust) ? " <--- Bust" : "") + "\n");
+                foreach (Card c in p.hand)
+                {
+                    Console.Write(c.Show() + " ");
+                }
+                Console.Write("\n");
+                Console.WriteLine("-----");
+            }
+            Thread.Sleep(waitTimeInMillisec);
         }
     }
 }

@@ -233,6 +233,7 @@ namespace Blackjack
 
         static void Main(string[] args)
         {
+            
             Start();
 
             BettingPhase();
@@ -245,6 +246,8 @@ namespace Blackjack
 
             CleanUp();
             
+            Card c = new Card(10, "d7");
+            Screen.DrawCard(c);
             Console.ReadKey();
         }
     }

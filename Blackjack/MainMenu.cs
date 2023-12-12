@@ -8,16 +8,16 @@ namespace Blackjack
 {
     internal class MainMenu
     {
-        public static List<Player> asdf()
+        public static List<Player> player()
         {
             string input;
             int count = 0;
             List<Player> players = new List<Player>();
-
+            Screen.DrawText(Console.WindowWidth / 2, 0, @"Black Jack");
             while(count < 5)
             {
                 count++;
-                Console.WriteLine($"Name of Player{count}: ");
+                Console.WriteLine($"Adja meg a(z){count}.játékos nevét: ");
                 input = Console.ReadLine();
                 if( input == "" )
                 {

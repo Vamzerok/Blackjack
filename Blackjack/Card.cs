@@ -12,11 +12,16 @@ namespace Blackjack
         public string Face;
         public bool IsFaceDown;
 
-        public Card(int value, string face, bool isFaceDown = false) 
+        public int x;
+        public int y;
+
+        public Card(int value, string face, bool isFaceDown = false, int x = 0, int y = 0) 
         {
             this.Value = value;
             this.Face = face;
             this.IsFaceDown = isFaceDown;
+            this.x = x;
+            this.y = y;
         }
 
         public string Show()

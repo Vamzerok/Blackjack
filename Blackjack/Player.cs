@@ -17,14 +17,19 @@ namespace Blackjack
         public bool Bust = false;
         public bool Won = false;
 
+        public int x;
+        public int y;
+
         internal static Random rnd = new Random();
 
         public List<Card> hand = new List<Card>();
 
-        public Player(string name, int balance = 100)
+        public Player(string name, int balance = 100, int x = 0, int y = 0)
         {
             this.Name = name;
             this.Balance = balance;
+            this.x = x;
+            this.y = y;
         }
 
         public int CalculatePoints()

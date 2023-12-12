@@ -12,6 +12,8 @@ namespace Blackjack
     {
         public static int width;
         public static int height;
+        public static int CARD_WIDTH = 9;
+        public static int CARD_HEIGHT = 9;
 
         public static ConsoleColor backgroundColor = ConsoleColor.Black; //no use yet
         public static ConsoleColor foregroundColor = ConsoleColor.White; //no use yet
@@ -65,6 +67,31 @@ namespace Blackjack
             }
         }
 
+        public static void DrawCard(Card c)
+        {
+            //vertical
+
+            for (int i = c.y; i < c.y+CARD_HEIGHT; i++)
+            {
+                Screen.DrawPoint(c.x, i);
+                Screen.DrawPoint(c.x + CARD_HEIGHT, i);
+            }
+
+            //horizontal
+            for (int i = c.x; i <=c.x +CARD_WIDTH; i++)
+            {
+                Screen.DrawPoint(i, c.y);
+                Screen.DrawPoint(i, c.y+CARD_WIDTH);
+            }
+
+            //Screen.DrawPoint()
+
+            Screen.DrawPoint(c.x + 2, c.y + 2, c: c.Face[0]);
+            Screen.DrawPoint(c.x + 2, c.y + 3, c: c.Face[1]);
+            Screen.DrawPoint(c.x + 7, c.y + 6, c: c.Face[0]);
+            Screen.DrawPoint(c.x + 7, c.y + 7, c: c.Face[1]);
+        }
+       
         public static void Update(int waitTimeInMillisec = 0)
         {
             Console.Clear();

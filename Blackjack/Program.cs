@@ -73,10 +73,10 @@ namespace Blackjack
         static void Start()
         {
             //playerek beállítása
-            //Players = MainMenu.asdf();
-            Players.Add(new Player("Jocó",   100));
+            Players = MainMenu.player();
+           /* Players.Add(new Player("Jocó",   100));
             Players.Add(new Player("Gábor",  100));
-            Players.Add(new Player("Andras", 100));
+            Players.Add(new Player("Andras", 100));*/
 
             //kártyák létrehozása
             Deck = Card.GenerateDeck();

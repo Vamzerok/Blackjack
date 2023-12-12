@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -62,6 +63,25 @@ namespace Blackjack
                 //printing the upcoming character with the Offsets applied
                 DrawPoint(x + xOffset, y + yOffset, text[i],bgColor,fgColor);
                 xOffset++;
+            }
+        }
+
+        static int CalculateXOffset(int width, int spaceing, int originX)
+        {
+
+        }
+
+        public static void DrawHand(Player p)
+        {
+            int xOffset;
+            int yOffset = 20;
+            int spaceing = 0;
+
+            xOffset = -(CARD_WIDTH*p.hand.Count() \ 2);
+            foreach(Card card in p.hand)
+            {
+                card.x = xOffset + spaceing + p;
+                DrawCard(card);
             }
         }
 

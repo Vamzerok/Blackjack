@@ -24,14 +24,15 @@ namespace Blackjack
         /// <param name="c">Beállítandó karakter (pl.: 'a')</param>
         /// <param name="bgColor">Opcionális paraméter. Karakter háttérszínének beállítása. (pl.: ConsoleColor.White)</param>
         /// <param name="fgColor">Opcionális paraméter. Karakter színének beállítása. (pl.: ConsoleColor.White)</param>
-        public static void DrawPoint(int x, int y, char c = ' ', ConsoleColor bgColor = ConsoleColor.White, ConsoleColor fgColor = ConsoleColor.Black)
+        /// <param name="resetCursor">Opcionális paraméter. true > visszaállítja a cursort a (0,0) koordinátára</param>
+        public static void DrawPoint(int x, int y, char c = ' ', ConsoleColor bgColor = ConsoleColor.White, ConsoleColor fgColor = ConsoleColor.Black, bool resetCursor = true)
         {
             Console.BackgroundColor = bgColor;
             Console.ForegroundColor = fgColor;
             Console.CursorLeft = x;
             Console.CursorTop = y;
             Console.Write(c);
-            Console.SetCursorPosition(0, 0);
+            if(resetCursor) Console.SetCursorPosition(0, 0);
         }
 
         public static void DrawText(int x, int y, string text, ConsoleColor bgColor = ConsoleColor.White, ConsoleColor fgColor = ConsoleColor.Black)

@@ -19,12 +19,15 @@ namespace Blackjack
 
         public const int CARD_Y_OFFSET = 2;
 
-        public const ConsoleColor CARD_BACKGROUND = ConsoleColor.Black;
-        public const ConsoleColor CARD_FOREGROUND = ConsoleColor.White;
-        public const ConsoleColor CARD_EDGECOLOR= ConsoleColor.Gray;
+        public static ConsoleColor CARD_BACKGROUND = ConsoleColor.Black;
+        public static ConsoleColor CARD_FOREGROUND = ConsoleColor.White;
+        public static ConsoleColor CARD_EDGECOLOR= ConsoleColor.Gray;
 
-        public static ConsoleColor backgroundColor = ConsoleColor.Black; //no use yet
-        public static ConsoleColor foregroundColor = ConsoleColor.White; //no use yet
+        public static ConsoleColor backgroundColor = ConsoleColor.White; 
+        public static ConsoleColor foregroundColor = ConsoleColor.Black;
+
+        public const string CROWN =
+            "  _.+._\r\n     (^\\/^\\/^)\r\n      \\@*@*@/\r\n   {_____}";
 
         public const string CARD_DESIGN =
             "+---------+" +
@@ -158,7 +161,7 @@ namespace Blackjack
         public static void DrawPlayerText(Player p, string text, int yOffset)
         {
             int totalWidth = text.Length / 2;
-            DrawText(p.x - totalWidth, p.y + yOffset, text);
+            DrawText(p.x - totalWidth, p.y + yOffset, text, backgroundColor, foregroundColor);
         }
 
         public static void Initialize()
@@ -177,9 +180,23 @@ namespace Blackjack
             //Players
             foreach (Player p in Program.Players)
             {
+                if (p.Bust)
+                {
+                    CARD_FOREGROUND = ConsoleColor.DarkGray;
+                    backgroundColor = ConsoleColor.DarkGray;
+                }
+                if (p.Won)
+                {
+                    CARD_FOREGROUND = ConsoleColor.Green;
+                    backgroundColor = ConsoleColor.Green;
+                }
                 DrawHand(p);
                 DrawPlayerText(p, $"{p.Name}", 0);
                 DrawPlayerText(p, $"Pénz: {p.Balance} | Tét: {p.BetAmount}", CARD_Y_OFFSET + CARD_HEIGHT + 1);
+                
+                //reseting colors to default
+                CARD_FOREGROUND = ConsoleColor.White;
+                backgroundColor = ConsoleColor.White;
             } 
             Thread.Sleep(waitTimeInMillisec);
         }

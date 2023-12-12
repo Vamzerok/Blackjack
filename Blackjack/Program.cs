@@ -22,57 +22,6 @@ namespace Blackjack
 
         public const int MARGINS = 0;
 
-        static string SafeInput(List<string> validUserInputs)
-        {
-            string input;
-            while (true)
-            {
-                Console.Write("> ");
-                input = Console.ReadLine();
-                foreach(string c in validUserInputs)
-                {
-                    if (input == c)
-                    {
-                        Console.Write("\n"); // mindig jó ha új sort kezdünk ;)
-                        return c;
-                    }
-                }
-                Console.WriteLine("Invalid input");
-            }
-        }
-
-        //overloading da function 
-        static double SafeInputInt(double min = 0, double max = 10, bool isInt = false)
-        {
-            string input;
-            while (true)
-            {
-                Console.Write("> ");
-                input = Console.ReadLine();
-                double numInput = double.Parse(input);
-
-                //check #1 
-                if (isInt && numInput % 1 != 0)
-                {
-                    Console.WriteLine("Input must be an integer.");
-                    continue;
-                }
-                //check #2 
-                if (numInput < min)
-                {
-                    Console.WriteLine($"Input must be greater than, or eaqual to {min}.");
-                    continue;
-                }
-                //check #3 
-                if (numInput > max)
-                {
-                    Console.WriteLine($"Input must be less than, or eaqual to {max}.");
-                    continue;
-                }
-                return numInput;
-            }
-        }
-
         static void Start()
         {
             Screen.Initialize();
@@ -101,7 +50,7 @@ namespace Blackjack
             foreach(Player p in Players) 
             {
                 Console.WriteLine($"{p.Name} Bet amount (min: {MINIMUM_BET}): ");
-                double bet = 15;//SafeInputInt(MINIMUM_BET, p.Balance, true);
+                double bet = 15; //Utils.SafeInputInt(MINIMUM_BET, p.Balance, true);
                 p.BetAmount = bet;
                 p.Balance -= bet;
             }
@@ -109,25 +58,27 @@ namespace Blackjack
 
         static void CardDealingPhase()
         {
+            int waitBetweenDeals = 1000;
+
             foreach (Player p in Players)
             {
                 p.DrawRandomCard();
 
-                Screen.Update(1000);
+                Screen.Update(waitBetweenDeals);
             }  
             Dealer.DrawRandomCard();
 
-            Screen.Update(1000);
+            Screen.Update(waitBetweenDeals);
 
             foreach (Player p in Players)
             {
                 p.DrawRandomCard();
 
-                Screen.Update(1000);
+                Screen.Update(waitBetweenDeals);
             }
             Dealer.DrawRandomCard(true);
 
-            Screen.Update(1000);
+            Screen.Update(waitBetweenDeals);
 
             //check for insta win
             foreach (Player p in Players)
@@ -135,6 +86,10 @@ namespace Blackjack
                 if(p.Points == MAXIMUM_POINTS)
                 {
                     p.Won = true;
+
+                    //instantly give them the nyeremény
+                    p.Balance += p.BetAmount * WIN_AMOUNT_MULTIPLIER;
+                    p.BetAmount = 0;
                 }
             }
         }
@@ -146,10 +101,14 @@ namespace Blackjack
             //interate through players
             foreach(Player p in Players)
             {
-                if (p.Won || p.Bust) continue;
+                if (p.Won || p.Bust)
+                {
+                    Screen.Update(1000);
+                    continue;
+                }
 
                 Console.WriteLine($"{p.Name}({p.Points}) --> hit(h) or stay(s)");
-                while(SafeInput(validInputs) == "h")
+                while(Utils.SafeInput(validInputs) == "h")
                 {
                     p.DrawRandomCard();
 
@@ -168,9 +127,6 @@ namespace Blackjack
                     //21
                     if (p.Points == MAXIMUM_POINTS)
                     {
-                        p.Won = true;
-
-                        Console.WriteLine($"{p.Name} --> GG's");
                         Thread.Sleep(1000);
                         break;
                     }
@@ -183,35 +139,43 @@ namespace Blackjack
 
         static void DealerPhase()
         {
+
             Dealer.hand[1].IsFaceDown = false;
            
-            Dealer.CalculatePoints();
+            Dealer.Points = Dealer.CalculatePoints();
             
             Screen.Update(2000);
 
-            while(Dealer.Points <= DEALERS_REQUIRED_POINTS)
+            //check if all the players have busted
+            bool allHaveBusted = true;
+            foreach(Player p in Players)
+            {
+                if (!p.Bust) allHaveBusted = false;
+            }
+            if (allHaveBusted) return;
+
+            //dealer draws until their points get bigger than DEALERS_REQUIRED_POINTS
+            while (Dealer.Points <= DEALERS_REQUIRED_POINTS)
             {
                 Dealer.DrawRandomCard();
-                Screen.Update(1000);
+                Screen.Update(2000);
             }
 
             //dealer busts
             if(Dealer.Points > MAXIMUM_POINTS)
             {
                 Dealer.Bust = true;
-                GameOverPhase(true);
             }
-            GameOverPhase(false);
         }
 
-        static void GameOverPhase(bool dealerBust)
+        static void GameOverPhase()
         {
-            Screen.Update(); //no raeson at all
+            Screen.Update(1000);
             bool dealerWins = true;
             foreach (Player p in Players)
             {
                 //jump over players who are out
-                if(p.Bust || p.Won) 
+                if(p.Bust) 
                 {
                     continue;
                 }
@@ -219,19 +183,22 @@ namespace Blackjack
                 dealerWins = false;
 
                 //every player that is still in the round wins 2x their bet
-                if (dealerBust || p.Points > Dealer.Points)
+                if (Dealer.Bust || p.Points >= Dealer.Points)
                 {
-                    p.Balance += p.BetAmount * WIN_AMOUNT_MULTIPLIER;
-                    Console.WriteLine($"{p.Name} wins {p.BetAmount * WIN_AMOUNT_MULTIPLIER}");
-                    continue;
+                    p.Won = true;
                 }
-
+                if (dealerWins)
+                {
+                    Dealer.Won = true;
+                }
             }
 
             if (dealerWins)
             {
                 Console.WriteLine("Dealer wins");
             }
+
+            Screen.Update(1000);
         }
 
         static void CleanUp()
@@ -239,10 +206,12 @@ namespace Blackjack
             //reset bet amount
             foreach (Player p in Players)
             {
+                p.Balance += p.BetAmount * WIN_AMOUNT_MULTIPLIER;
                 p.BetAmount = 0;
             }
 
             //idk meg mi kell ide
+            Screen.Update();
         }
 
         static void Main(string[] args)
@@ -250,13 +219,15 @@ namespace Blackjack
 
             Start();
             
-            //BettingPhase();
+            BettingPhase();
 
             CardDealingPhase();
 
             PlayersPhase();
 
             DealerPhase();
+
+            GameOverPhase();
 
             CleanUp();
 

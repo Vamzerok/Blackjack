@@ -49,17 +49,21 @@ namespace Blackjack
             foreach (char suit in suits)
             {
                 //suit cards
-                for (int i = 2; i <= 10; i++)
+                for (int i = 2; i <= 9; i++)
                 {
                     string face = suit.ToString() + i.ToString();
                     deck.Add(new Card(i, face));
                 }
+                //we don't talk about the number 10
+                deck.Add(new Card(10, suit.ToString() + '\u2491'));
+
                 //face cards
                 foreach (char f in faceCards)
                 {
                     string face = suit.ToString() + f.ToString();
                     deck.Add(new Card(10, face));
                 }
+
                 //ace
                 deck.Add(
                     new Card(11, suit.ToString() + "A")

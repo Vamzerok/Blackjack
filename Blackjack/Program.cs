@@ -12,12 +12,15 @@ namespace Blackjack
     {
         public static List<Card> Deck;
         public static List<Player> Players = new List<Player>();
-        public static Player Dealer = new Player("dealer");
+        public static Player Dealer;
 
         public static int MAXIMUM_POINTS = 21;
         public static int DEALERS_REQUIRED_POINTS = 16;
         public static int MINIMUM_BET = 10;
         public static int WIN_AMOUNT_MULTIPLIER= 2;
+        public static int PLAYER_Y_POS = 15;
+
+        public const int MARGINS = 0;
 
         static string SafeInput(List<string> validUserInputs)
         {
@@ -72,11 +75,22 @@ namespace Blackjack
 
         static void Start()
         {
+            Screen.Initialize();
             //playerek beállítása
-            Players = MainMenu.player();
-           /* Players.Add(new Player("Jocó",   100));
-            Players.Add(new Player("Gábor",  100));
-            Players.Add(new Player("Andras", 100));*/
+            //Players = MainMenu.player();
+
+            Dealer = new Player("dealer", x: Console.WindowWidth / 2 -1, y: 2);
+
+            Players.Add(new Player("Jocó",   100, y: PLAYER_Y_POS));
+            Players.Add(new Player("Gábor",  100, y: PLAYER_Y_POS));
+            Players.Add(new Player("Andras", 100, y: PLAYER_Y_POS));
+
+            List<int> playerPos = Utils.CalculateIntervals(Console.WindowWidth - MARGINS, Players.Count() + 2);
+            for(int i = 0; i < Players.Count; i++) 
+            {
+                Players[i].x = MARGINS / 2 + playerPos[i+1];
+                Screen.DrawPoint(Players[i].x, Players[i].y, bgColor: ConsoleColor.Magenta);
+            }
 
             //kártyák létrehozása
             Deck = Card.GenerateDeck();
@@ -99,17 +113,17 @@ namespace Blackjack
             {
                 p.DrawRandomCard();
 
-                Screen.Update();
+                Screen.Update(1000);
             }  
             Dealer.DrawRandomCard();
 
-            Screen.Update();
+            Screen.Update(1000);
 
             foreach (Player p in Players)
             {
                 p.DrawRandomCard();
 
-                Screen.Update();
+                Screen.Update(1000);
             }
             Dealer.DrawRandomCard(true);
 
@@ -233,10 +247,10 @@ namespace Blackjack
 
         static void Main(string[] args)
         {
-            
-            Start();
 
-            BettingPhase();
+            Start();
+            
+            //BettingPhase();
 
             CardDealingPhase();
 
@@ -245,9 +259,7 @@ namespace Blackjack
             DealerPhase();
 
             CleanUp();
-            
-            Card c = new Card(10, "d7");
-            Screen.DrawCard(c);
+
             Console.ReadKey();
         }
     }

@@ -13,11 +13,29 @@ namespace Blackjack
     {
         public static int width;
         public static int height;
-        public static int CARD_WIDTH = 9;
-        public static int CARD_HEIGHT = 9;
+
+        public static int CARD_WIDTH;
+        public static int CARD_HEIGHT;
+
+        public const int CARD_Y_OFFSET = 2;
+
+        public const ConsoleColor CARD_BACKGROUND = ConsoleColor.Black;
+        public const ConsoleColor CARD_FOREGROUND = ConsoleColor.White;
+        public const ConsoleColor CARD_EDGECOLOR= ConsoleColor.Gray;
 
         public static ConsoleColor backgroundColor = ConsoleColor.Black; //no use yet
         public static ConsoleColor foregroundColor = ConsoleColor.White; //no use yet
+
+        public const string CARD_DESIGN =
+            "+---------+" +
+            "| 0       |" +
+            "| 1       |" +
+            "|         |" +
+            "|    0    |" +
+            "|         |" +
+            "|       0 |" +
+            "|       1 |" +
+            "+---------+";
 
         /// <summary>
         /// A képernyő tetszóleges pontját, a megadott paraméterekre módosítja.
@@ -32,10 +50,19 @@ namespace Blackjack
         {
             Console.BackgroundColor = bgColor;
             Console.ForegroundColor = fgColor;
-            Console.CursorLeft = x;
-            Console.CursorTop = y;
-            Console.Write(c);
-            if(resetCursor) Console.SetCursorPosition(0, 0);
+            try
+            {
+                Console.CursorLeft = x;
+                Console.CursorTop = y;
+                Console.Write(c);
+                if (resetCursor) Console.SetCursorPosition(0, 0);
+            }
+            catch
+            {
+                
+            }
+            
+            Console.ResetColor();
         }
 
         public static void DrawText(int x, int y, string text, ConsoleColor bgColor = ConsoleColor.White, ConsoleColor fgColor = ConsoleColor.Black)
@@ -70,77 +97,90 @@ namespace Blackjack
 
         public static void DrawCard(Card c)
         {
-            //vertical
-
-            for (int i = c.y; i < c.y+CARD_HEIGHT; i++)
+            for (int i = 0; i < CARD_HEIGHT; i++)
             {
-                Screen.DrawPoint(c.x, i);
-                Screen.DrawPoint(c.x + CARD_HEIGHT, i);
+                for (int j = 0; j < CARD_WIDTH; j++)
+                {
+                    if (c.IsFaceDown)
+                    {
+                        if((0 < i && i < CARD_HEIGHT-1) && (0 < j && j < CARD_WIDTH-1))
+                        {
+                            DrawPoint(c.x + j, c.y + i, '#', bgColor: CARD_BACKGROUND, fgColor: CARD_FOREGROUND);
+                            continue;
+                        }
+                    }
+
+                    char selectedCharacter = CARD_DESIGN[i*CARD_WIDTH + j];
+                    switch (selectedCharacter)
+                    {
+                        case '0':
+                            DrawPoint(c.x + j, c.y + i, c.Face[0], bgColor: CARD_BACKGROUND, fgColor: CARD_FOREGROUND);
+                            break;
+                        case '1':
+                            DrawPoint(c.x + j, c.y + i, c.Face[1], bgColor: CARD_BACKGROUND, fgColor: CARD_FOREGROUND);
+                            break;
+                        default:
+                            DrawPoint(c.x + j, c.y + i, selectedCharacter, bgColor: CARD_BACKGROUND, fgColor: CARD_FOREGROUND);
+                            break;
+                    }
+                }
             }
-
-            //horizontal
-            for (int i = c.x; i <=c.x +CARD_WIDTH; i++)
-            {
-                Screen.DrawPoint(i, c.y);
-                Screen.DrawPoint(i, c.y+CARD_WIDTH);
-            }
-
-            //Screen.DrawPoint()
-
-            Screen.DrawPoint(c.x + 2, c.y + 2, c: c.Face[0]);
-            Screen.DrawPoint(c.x + 2, c.y + 3, c: c.Face[1]);
-            Screen.DrawPoint(c.x + 7, c.y + 6, c: c.Face[0]);
-            Screen.DrawPoint(c.x + 7, c.y + 7, c: c.Face[1]);
         }
 
-        static int CalculateXOffset(int width, int spaceing, int originX)
+        public static List<int> CreateSpaceing(int width, int spaceing, int quantity, int xOrigin)
         {
+            List<int> coords = new List<int>();
+            
+            int totalWidth = (width * quantity) + (spaceing * (quantity-1));
 
+            int absoluteLeftMostPoint = xOrigin - totalWidth / 2;
+
+            for (int i = 0; i < quantity; i++)
+            {
+                coords.Add(absoluteLeftMostPoint + (width * i + spaceing * i));
+            }
+
+            return coords;
         }
 
-        public static void DrawHand(Player p)
+        public static void DrawHand(Player p, int xOffset = 0, int yOffset = CARD_Y_OFFSET, int spaceing = -7)
         {
-            int xOffset;
-            int yOffset = 20;
-            int spaceing = 0;
-
-            xOffset = -(CARD_WIDTH*p.hand.Count() \ 2);
-            foreach(Card card in p.hand)
+            List<int> coords = CreateSpaceing(CARD_WIDTH, spaceing, p.hand.Count(), p.x);
+            for(int i = 0; i < p.hand.Count(); i++)
             {
-                card.x = xOffset + spaceing + p;
+                Card card = p.hand[i];
+                card.x = xOffset + coords[i] ;
+                card.y = p.y + CARD_Y_OFFSET;
                 DrawCard(card);
             }
+        }
+
+        public static void DrawPlayerText(Player p, string text, int yOffset)
+        {
+            int totalWidth = text.Length / 2;
+            DrawText(p.x - totalWidth, p.y + yOffset, text);
+        }
+
+        public static void Initialize()
+        {
+            CARD_WIDTH = 11;
+            CARD_HEIGHT = 9;
         }
 
         public static void Update(int waitTimeInMillisec = 0)
         {
             Console.Clear();
             //Dealer
-            Console.Write("Dealer" + $"({Program.Dealer.Points})");
-            Console.Write(((Program.Dealer.Bust) ? " < Bust" : ""));
-            Console.Write("\n");
-            foreach (Card c in Program.Dealer.hand)
-            {
-                Console.Write(c.Show() + " ");
-            }
-            Console.Write("\n");
-            
+            DrawHand(Program.Dealer, yOffset: 1);
+            DrawPlayerText(Program.Dealer, $"Dealer", 0);
+
             //Players
-            Console.WriteLine("------------------");
-            foreach(Player p in Program.Players)
+            foreach (Player p in Program.Players)
             {
-                Console.Write(p.Name + $"({p.Points})" + " | ");
-                Console.Write(p.BetAmount + " | ");
-                Console.Write(p.Balance + " | ");
-                Console.Write(((p.Bust) ? " < Bust" : ""));
-                Console.Write("\n");
-                foreach (Card c in p.hand)
-                {
-                    Console.Write(c.Show() + " ");
-                }
-                Console.Write("\n");
-                Console.WriteLine("-----");
-            }
+                DrawHand(p);
+                DrawPlayerText(p, $"{p.Name}", 0);
+                DrawPlayerText(p, $"Pénz: {p.Balance} | Tét: {p.BetAmount}", CARD_Y_OFFSET + CARD_HEIGHT + 1);
+            } 
             Thread.Sleep(waitTimeInMillisec);
         }
     }

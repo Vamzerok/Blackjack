@@ -23,7 +23,7 @@ namespace Blackjack
         {
             string input;
             int count = 0;
-            string prompt = $"Adja meg a(z){count}.játékos nevét:";
+            string prompt = $"Játékos hozzáadása: ";
             int textOffset = 3;
 
             List<Player> players = new List<Player>();
@@ -45,7 +45,13 @@ namespace Blackjack
             while (count < 3)
             {
                 count++;
-                Screen.DrawText((Console.WindowWidth/2) - (prompt.Length/2), (logoHeight + textOffset) + textOffset * count, prompt,ConsoleColor.Black,ConsoleColor.White);
+
+                int drawPosX = (Console.WindowWidth / 2) - (prompt.Length / 2);
+                int drawPosY = (logoHeight + textOffset) + textOffset * count;
+
+                Screen.DrawText(drawPosX, drawPosY, prompt,ConsoleColor.Black,ConsoleColor.White);
+                Console.SetCursorPosition(drawPosX + prompt.Length, drawPosY);
+
                 input = Console.ReadLine();
                 if( input == "" )
                 {

@@ -24,15 +24,6 @@ namespace Blackjack
             this.y = y;
         }
 
-        public string Show()
-        {
-            if(IsFaceDown)
-            {
-                return "##";
-            }
-            return this.Face;
-        }
-
         public static List<Card> GenerateDeck()
         {
             List<Card> deck = new List<Card>();

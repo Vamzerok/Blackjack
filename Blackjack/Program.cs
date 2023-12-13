@@ -192,13 +192,13 @@ namespace Blackjack
 
             if (dealerWins)
             {
-                Console.WriteLine("Dealer wins");
+                Dealer.Won = true;
             }
 
             Screen.Update(1000);
         }
 
-        static void CleanUp()
+        static void HandleBets()
         {
             //reset bet amount
             foreach (Player p in Players)
@@ -210,26 +210,56 @@ namespace Blackjack
                 p.BetAmount = 0;
             }
 
-            //idk meg mi kell ide
-            Screen.Update();
+            Screen.Update(1000);
+        }
+
+        static bool GameEnd()
+        {
+            Screen.DrawText(0, 0, "Mehet a kövi kor? (y/n)");
+            string input = Utils.SafeInput(new List<string>() { "y", "n" });
+            Console.SetCursorPosition(0, 1);
+
+            if (input == "n")
+            {
+                return false;
+            }
+
+            //setup for next round
+            foreach(Player p in Players)
+            {
+                p.hand.Clear();
+                p.Won = false;
+                p.Bust = false;
+            }
+            Dealer.hand.Clear();
+            Dealer.Won = false;
+            Dealer.Bust = false;
+
+            return true;
         }
 
         static void Main(string[] args)
         {
 
             Start();
-            
-            BettingPhase();
 
-            CardDealingPhase();
+            bool game = true;
+            while (game)
+            {
+                BettingPhase();
 
-            PlayersPhase();
+                CardDealingPhase();
 
-            DealerPhase();
+                PlayersPhase();
 
-            GameOverPhase();
+                DealerPhase();
 
-            CleanUp();
+                GameOverPhase();
+
+                HandleBets();
+
+                game = GameEnd();
+            }
 
             Console.ReadKey();
         }

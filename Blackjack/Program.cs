@@ -25,14 +25,11 @@ namespace Blackjack
         static void Start()
         {
             Screen.Initialize();
-            //playerek beállítása
-            //Players = MainMenu.player();
-
+            //dealer beállítása
             Dealer = new Player("dealer", x: Console.WindowWidth / 2 -1, y: 2);
 
-            Players.Add(new Player("Jocó",   100, y: PLAYER_Y_POS));
-            Players.Add(new Player("Gábor",  100, y: PLAYER_Y_POS));
-            Players.Add(new Player("Andras", 100, y: PLAYER_Y_POS));
+            //playerek beállítása
+            Players = MainMenu.player();
 
             List<int> playerPos = Utils.CalculateIntervals(Console.WindowWidth - MARGINS, Players.Count() + 2);
             for(int i = 0; i < Players.Count; i++) 
@@ -206,7 +203,10 @@ namespace Blackjack
             //reset bet amount
             foreach (Player p in Players)
             {
-                p.Balance += p.BetAmount * WIN_AMOUNT_MULTIPLIER;
+                if (p.Won)
+                {
+                    p.Balance += p.BetAmount * WIN_AMOUNT_MULTIPLIER;
+                }
                 p.BetAmount = 0;
             }
 

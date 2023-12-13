@@ -44,10 +44,11 @@ namespace Blackjack
 
         static void BettingPhase()
         {
+            Console.Clear();
             foreach(Player p in Players) 
             {
-                Console.WriteLine($"{p.Name} Bet amount (min: {MINIMUM_BET}): ");
-                double bet = 15; //Utils.SafeInputInt(MINIMUM_BET, p.Balance, true);
+                Console.WriteLine($"{p.Name} Bet amount (min: {MINIMUM_BET}, max: {p.Balance}): ");
+                double bet = Utils.SafeInputInt(MINIMUM_BET, p.Balance, true);
                 p.BetAmount = bet;
                 p.Balance -= bet;
             }
@@ -177,16 +178,12 @@ namespace Blackjack
                     continue;
                 }
 
-                dealerWins = false;
 
                 //every player that is still in the round wins 2x their bet
                 if (Dealer.Bust || p.Points >= Dealer.Points)
                 {
                     p.Won = true;
-                }
-                if (dealerWins)
-                {
-                    Dealer.Won = true;
+                    dealerWins = false;
                 }
             }
 
@@ -216,8 +213,8 @@ namespace Blackjack
         static bool GameEnd()
         {
             Screen.DrawText(0, 0, "Mehet a kövi kor? (y/n)");
-            string input = Utils.SafeInput(new List<string>() { "y", "n" });
             Console.SetCursorPosition(0, 1);
+            string input = Utils.SafeInput(new List<string>() { "y", "n" });
 
             if (input == "n")
             {
@@ -240,7 +237,6 @@ namespace Blackjack
 
         static void Main(string[] args)
         {
-
             Start();
 
             bool game = true;

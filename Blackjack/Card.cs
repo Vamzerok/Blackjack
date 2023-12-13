@@ -46,7 +46,7 @@ namespace Blackjack
                     deck.Add(new Card(i, face));
                 }
                 //we don't talk about the number 10
-                deck.Add(new Card(10, suit.ToString() + '\u2469'));
+                //deck.Add(new Card(10, suit.ToString() + '\u2469'));
 
                 //face cards
                 foreach (char f in faceCards)

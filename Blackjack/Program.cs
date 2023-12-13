@@ -22,6 +22,9 @@ namespace Blackjack
 
         public const int MARGINS = 0;
 
+        /// <summary>
+        /// osztót és a játékosokat határozza meg, majd kártyákat oszt nekik
+        /// </summary>
         static void Start()
         {
             Screen.Initialize();
@@ -42,6 +45,9 @@ namespace Blackjack
             Deck = Card.GenerateDeck();
         }
 
+        /// <summary>
+        /// minden játékostól bekéri a tétet majd levonja az összes zsetonból
+        /// </summary>
         static void BettingPhase()
         {
             Console.Clear();
@@ -54,6 +60,11 @@ namespace Blackjack
             }
         }
 
+        /// <summary>
+        /// - A játékosoknak kiosztja fejenként a 2-2 kártyát
+        /// - kiosztja a dealernek a kártyát, a szabály szerint a 2. lefordítva
+        /// - vizsgálja hogy valakinek 21-e az összeg(ha igen akkor ő a nyertes), majd neki adja a nyereményt
+        /// </summary>
         static void CardDealingPhase()
         {
             int waitBetweenDeals = 1000;
@@ -92,6 +103,10 @@ namespace Blackjack
             }
         }
 
+        /// <summary>
+        /// -játékosok kérhetnek lapot illetve tartózkodhatnak(ha kér akkor ad neki lapot, és vizsgálja nem e lépte túl a 21-et)
+        /// -21 esetén az adott játékos megnyeri
+        /// </summary>
         static void PlayersPhase()
         {
             List<string> validInputs = new List<string>() { "h", "s" };
@@ -135,6 +150,10 @@ namespace Blackjack
             }
         }
 
+        /// <summary>
+        /// -a playerphase eljárás befejezése után az osztó felveszi a lapokat addig amíg minimum 17-en nem áll(ez a szabály)
+        ///-vizsgálja ha az osztó túllép(akkor ő veszít)
+        /// </summary>
         static void DealerPhase()
         {
 
@@ -166,6 +185,9 @@ namespace Blackjack
             }
         }
 
+        /// <summary>
+        /// megnézi a még nem nyer és még nem veszített játékjosok és az osztó lapjait, a győztest kiirja
+        /// </summary>
         static void GameOverPhase()
         {
             Screen.Update(1000);
@@ -195,6 +217,9 @@ namespace Blackjack
             Screen.Update(1000);
         }
 
+        /// <summary>
+        /// győzelem esetén a játékos megkapja a tét dupláját és hozzáadja a meglévő összeghez
+        /// </summary>
         static void HandleBets()
         {
             //reset bet amount
@@ -210,6 +235,10 @@ namespace Blackjack
             Screen.Update(1000);
         }
 
+        /// <summary>
+        /// felkészíti a játékot a következő körre ha a játékos úgy dönt
+        /// </summary>
+        /// <returns></returns>
         static bool GameEnd()
         {
             Screen.DrawText(0, 0, "Mehet a kövi kor? (y/n)");
